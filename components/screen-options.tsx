@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-onchange */
 import { ChangeEvent } from 'react';
 import AudioBars from './audio-bars';
 import Button from './button';
@@ -11,10 +12,11 @@ type DeviceList = {
 
 type Props = {
   isLoadingPreview: boolean,
-  isRecording: boolean,
   isMicDeviceEnabled: boolean,
+  isRecording: boolean,
   deviceList: DeviceList,
   audioLevel: number,
+  selectVideo: (evt: ChangeEvent<HTMLSelectElement>) => void,
   selectAudio: (evt: ChangeEvent<HTMLSelectElement>) => void,
   enableMicForScreenshare: () => void,
   isMuted: boolean,
@@ -32,9 +34,6 @@ const ScreenOptions: React.FC<Props> = ({
   isMuted,
   muteAudioTrack,
 }) => {
-  // Filter out screen recording devices from the video device list
-  const cameraDevices = deviceList.video.filter(device => device.kind === 'videoinput');
-
   return (
     <>
       <div>
@@ -47,11 +46,6 @@ const ScreenOptions: React.FC<Props> = ({
           <select onChange={selectAudio} disabled={isRecording} title={isRecording ? 'Cannot change audio devices while recording' : ''}>
             {
               deviceList.audio.map(({ label, deviceId }) => <option key={deviceId} value={deviceId}>{label}</option>)
-            }
-          </select>
-          <select onChange={selectVideo} disabled={isRecording} title={isRecording ? 'Cannot change video devices while recording' : ''}>
-            {
-              cameraDevices.map(({ label, deviceId }) => <option key={deviceId} value={deviceId}>{label}</option>)
             }
           </select>
         </div> :
