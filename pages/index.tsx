@@ -176,9 +176,7 @@ const Index: React.FC<Props> = () => {
             <div className="cta-record">
               <Link href="/record?source=camera"><Button>Record from camera</Button></Link>
             </div>
-            <div className="cta-record">
-              <Link href="/record?source=screen"><Button>Record my screen</Button></Link>
-            </div>
+           
           </>
         ) : null}
         </div>

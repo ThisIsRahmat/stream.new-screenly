@@ -7,7 +7,7 @@ const VideoSourceToggle: React.FC<Props> = ({ activeSource, onChange }) => {
   return (
     <div className="tabs">
       <button className={`tab ${activeSource === 'camera' ? 'active' : ''}`} onClick={() => onChange('camera')}>Camera</button>
-      <button className={`tab ${activeSource === 'screen' ? 'active' : ''}`} onClick={() => onChange('screen')} >Screenshare</button>
+     
       <style jsx>{`
         .tabs {
           margin: 30px 5px 20px;

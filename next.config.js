@@ -1,3 +1,5 @@
+
+
 const { createSecureHeaders } = require('next-secure-headers');
 
 const secureHeaderOptions = {

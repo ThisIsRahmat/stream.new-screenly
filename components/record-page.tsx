@@ -149,9 +149,7 @@ const RecordPage: React.FC<NoProps> = () => {
     if (videoSource === 'camera') {
       startCamera();
     }
-    if (videoSource === 'screen') {
-      startScreenshare();
-    }
+   
   };
 
   const setupStream = (stream: MediaStream) => {
@@ -223,56 +221,40 @@ const RecordPage: React.FC<NoProps> = () => {
     };
   };
 
-  const startScreenshare = async () => {
-    if (navigator.mediaDevices) {
-      const audio = audioDeviceId ? { deviceId: audioDeviceId } : true;
-      const constraints = { video: false, audio };
-      try {
-        const stream = streamRef.current || await navigator.mediaDevices.getDisplayMedia({ video: true });
-        if (isMicDeviceEnabled) {
-          logger('requesting user media with constraints', constraints);
-          const audioStream = await navigator.mediaDevices.getUserMedia(constraints);
-          /*
-           * if we already have an audio track it needs to be removed
-           * this happens when a user changes the mic input
-           */
-          stream.getTracks().filter(track => track.kind === 'audio').forEach(track => {
-            stream.removeTrack(track);
-          });
-          stream.addTrack(audioStream.getAudioTracks()[0]);
-        }
-        setupStream(stream);
-      } catch (err) {
-        logger.error(err);
-        setIsRequestingMedia(false);
-        setErrorMessage('Error getting screenshare. Please allow screen access in your browser settings.');
-      }
-    } else {
-      setErrorMessage('navigator.mediaDevices not available in this browser');
-    }
-    return function teardown () {
-      hardCleanup();
-    };
-  };
+
 
   const reset = async () => {
     hardCleanup();
   };
-
+  
   useEffect(() => {
-    //
-    // This updates the device list when the list changes. For example
-    // plugging in or unplugging a mic or camera
-    //
-    navigator.mediaDevices.ondevicechange = getDevices;
+    const handleDeviceChange = () => {
+      getDevices();
+    };
+  
+    // Check if navigator.mediaDevices and ondevicechange are supported
+    if (navigator.mediaDevices && 'ondevicechange' in navigator.mediaDevices) {
+      // Add event listener for device change
+      navigator.mediaDevices.ondevicechange = handleDeviceChange;
+    } else {
+      console.log('MediaDevices API or ondevicechange event is not supported.');
+    }
+  
+    // Clean up the event listener when the component unmounts
+    return () => {
+      if (navigator.mediaDevices && 'ondevicechange' in navigator.mediaDevices) {
+        // Remove event listener for device change
+        navigator.mediaDevices.ondevicechange = null;
+      }
+    };
   }, []);
-
+  
   useEffect(() => {
     if (isMicDeviceEnabled || videoDeviceId || audioDeviceId) {
       startAv();
     }
   }, [videoDeviceId, audioDeviceId, isMicDeviceEnabled]);
-
+  
   const prepRecording = () => {
     logger('prep recording');
     if (typeof MediaRecorder === 'undefined') {
@@ -384,10 +366,8 @@ const RecordPage: React.FC<NoProps> = () => {
     router.push({ pathname: '/record', query: { source } });
   };
 
-  const enableMicForScreenshare = async () => {
-    setIsMicDeviceEnabled(true);
-    await getDevices();
-  };
+
+  
 
   if (file && showUploadPage) {
     return <UploadProgressFullpage file={file} resetPage={hardCleanup}/>;
@@ -398,10 +378,9 @@ const RecordPage: React.FC<NoProps> = () => {
    * the video is not the mirror image.
    */
   const showMirrorImage = () => {
-    if (videoSource === 'camera') {
-      return !isReviewing;
-    }
-    return false;
+
+    return !isReviewing;
+  
   };
 
   const isMuted = (): boolean => {
@@ -426,11 +405,9 @@ const RecordPage: React.FC<NoProps> = () => {
         {!haveDeviceAccess && videoSource === 'camera' &&
           <AccessSkeletonFrame onClick={startCamera} text={ isRequestingMedia ? 'Loading device...' : 'Allow the browser to use your camera/mic' } />
         }
-        {!haveDeviceAccess && videoSource === 'screen' &&
-          <AccessSkeletonFrame onClick={startScreenshare} text={ isRequestingMedia ? 'Loading device...' : 'Allow the browser to access screenshare' } />
-        }
+      
       </div>
-      { videoSource === '' && <div>Select camera or screenshare to get started</div>}
+      
       <div className='video-container'>
         {<video className={showMirrorImage() ? 'mirror-image' : ''} ref={videoRef} width="400" autoPlay />}
         <CountdownTimer ref={countdownTimerRef} onElapsed={startRecording} />
@@ -450,20 +427,7 @@ const RecordPage: React.FC<NoProps> = () => {
           selectAudio={selectAudio}
         />
       }
-      {haveDeviceAccess && videoSource === 'screen' &&
-        <ScreenOptions
-          isMicDeviceEnabled={isMicDeviceEnabled}
-          enableMicForScreenshare={enableMicForScreenshare}
-          isLoadingPreview={isLoadingPreview}
-          isRecording={isRecording}
-          isMuted={isMuted()}
-          muteAudioTrack={muteAudioTrack}
-          deviceList={deviceList}
-          audioLevel={audioLevel}
-          selectVideo={selectVideo}
-          selectAudio={selectAudio}
-        />
-      }
+     
       { haveDeviceAccess && (
       <RecordingControls
         recordState={recordState}
