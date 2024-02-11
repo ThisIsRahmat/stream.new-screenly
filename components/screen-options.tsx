@@ -18,7 +18,7 @@ type Props = {
   audioLevel: number,
   selectVideo: (evt: ChangeEvent<HTMLSelectElement>) => void,
   selectAudio: (evt: ChangeEvent<HTMLSelectElement>) => void,
-  enableMicForScreenshare: () => void,
+ 
   isMuted: boolean,
   muteAudioTrack: (muted: boolean) => void,
 };
@@ -30,7 +30,7 @@ const ScreenOptions: React.FC<Props> = ({
   deviceList,
   audioLevel,
   selectAudio,
-  enableMicForScreenshare,
+
   isMuted,
   muteAudioTrack,
 }) => {
@@ -49,7 +49,7 @@ const ScreenOptions: React.FC<Props> = ({
             }
           </select>
         </div> :
-        <div className="button"><Button onClick={enableMicForScreenshare}>Enable microphone</Button></div>
+    
       }
       <style jsx>{`
         .audio-bars {

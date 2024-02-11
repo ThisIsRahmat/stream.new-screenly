@@ -33,7 +33,7 @@ type QueryParams = {
 
 const RecordPage: React.FC<NoProps> = () => {
   const router = useRouter();
-  const [videoSource, setVideoSource] = useState<'camera' | 'screen' | ''>('');
+  const [videoSource, setVideoSource] = useState<'camera' |  ''>('');
   const [errorMessage, setErrorMessage] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [startRecordTime, setStartRecordTime] = useState<number | null>(null);
