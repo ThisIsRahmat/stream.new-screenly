@@ -7,7 +7,7 @@ import StopWatch from './stop-watch';
 import VideoSourceToggle from './video-source-toggle';
 import RecordingControls from './recording-controls';
 import CameraOptions from './camera-options';
-import ScreenOptions from './screen-options';
+
 import AccessSkeletonFrame from './access-skeleton-frame';
 import UploadProgressFullpage from './upload-progress-fullpage';
 import logger from '../lib/logger';
